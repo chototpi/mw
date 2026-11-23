@@ -1,402 +1,129 @@
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
-
+import React, { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { piService } from "@/lib/pi-service";
-
-
-// =====================================================
-// TYPES
-// =====================================================
 
 interface PiAuthContextType {
   isAuthenticated: boolean;
   isInitializing: boolean;
-
   authMessage: string;
   hasError: boolean;
-
   username: string | null;
   uid: string | null;
   accessToken: string | null;
-
   reinitialize: () => Promise<void>;
+  completeOAuthLogin: (accessToken: string) => Promise<void>;
+  logout: () => void;
 }
 
+const PiAuthContext = createContext<PiAuthContextType | undefined>(undefined);
 
-// =====================================================
-// CONTEXT
-// =====================================================
+function isPiBrowser(): boolean {
+  return typeof navigator !== "undefined" && /pibrowser/i.test(navigator.userAgent);
+}
 
-const PiAuthContext =
-  createContext<PiAuthContextType | undefined>(
-    undefined
-  );
+export function PiAuthProvider({ children }: { children: ReactNode }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [authMessage, setAuthMessage] = useState("Checking saved login...");
+  const [hasError, setHasError] = useState(false);
+  const [username, setUsername] = useState<string | null>(null);
+  const [uid, setUid] = useState<string | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
 
-
-// =====================================================
-// PROVIDER
-// =====================================================
-
-export function PiAuthProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
-
-  const [
-    isAuthenticated,
-    setIsAuthenticated,
-  ] = useState(false);
-
-  const [
-    isInitializing,
-    setIsInitializing,
-  ] = useState(true);
-
-  const [
-    authMessage,
-    setAuthMessage,
-  ] = useState(
-    "Initializing Pi Network..."
-  );
-
-  const [
-    hasError,
-    setHasError,
-  ] = useState(false);
-
-  const [
-    username,
-    setUsername,
-  ] = useState<string | null>(null);
-
-  const [
-    uid,
-    setUid,
-  ] = useState<string | null>(null);
-
-  const [
-    accessToken,
-    setAccessToken,
-  ] = useState<string | null>(null);
-
-
-  // ===================================================
-  // INITIALIZE PI AUTH
-  // ===================================================
-
-  const initialize = async () => {
-
-    console.log(
-      "[PiAuth] Initialize"
-    );
-
-    setIsInitializing(true);
+  const saveLogin = useCallback((name: string, userId: string, token: string) => {
+    setUsername(name);
+    setUid(userId);
+    setAccessToken(token);
+    setIsAuthenticated(true);
     setHasError(false);
-
-    setAuthMessage(
-      "Connecting to Pi Network..."
-    );
-
-
-    try {
-
-      // ===============================================
-      // 1. PI INIT + AUTHENTICATE
-      //
-      // piService.login() performs:
-      //
-      // await Pi.init(...)
-      //
-      // then:
-      //
-      // Pi.authenticate(
-      //   ["username", "payments"],
-      //   onIncompletePaymentFound
-      // )
-      // ===============================================
-
-      console.log(
-        "[PiAuth] Authenticating..."
-      );
-
-      setAuthMessage(
-        "Authenticating with Pi..."
-      );
-
-
-      const loginResult =
-        await piService.login();
-
-
-      if (
-        !loginResult.success ||
-        !loginResult.accessToken ||
-        !loginResult.user
-      ) {
-
-        throw new Error(
-          loginResult.error ||
-          "Pi authentication failed"
-        );
-
-      }
-
-
-      console.log(
-        "[PiAuth] Pi authentication successful:",
-        loginResult.user
-      );
-
-
-      // ===============================================
-      // 2. SERVER VERIFICATION
-      //
-      // Backend verifies accessToken against:
-      //
-      // GET /v2/me
-      // Authorization: Bearer accessToken
-      //
-      // Client identity is NOT trusted until this
-      // succeeds.
-      // ===============================================
-
-      setAuthMessage(
-        "Verifying Pi account..."
-      );
-
-
-      const verifyResult =
-        await piService.verifyWithBackend(
-          loginResult.accessToken
-        );
-
-
-      if (
-        !verifyResult.success ||
-        !verifyResult.user
-      ) {
-
-        throw new Error(
-          verifyResult.error ||
-          "Server rejected Pi account"
-        );
-
-      }
-
-
-      console.log(
-        "[PiAuth] Server verified:",
-        verifyResult.user
-      );
-
-
-      // ===============================================
-      // 3. VERIFIED USER
-      // ===============================================
-
-      const verifiedUsername =
-        verifyResult.user.username;
-
-      const verifiedUid =
-        verifyResult.user.uid;
-
-
-      setUsername(
-        verifiedUsername
-      );
-
-      setUid(
-        verifiedUid
-      );
-
-      setAccessToken(
-        loginResult.accessToken
-      );
-
-
-      // ===============================================
-      // 4. LOCAL SESSION CACHE
-      //
-      // These are convenience values only.
-      // Backend must never trust them for payment
-      // authorization.
-      // ===============================================
-
-      localStorage.setItem(
-        "pi_username",
-        verifiedUsername
-      );
-
-      localStorage.setItem(
-        "uid",
-        verifiedUid
-      );
-
-      localStorage.setItem(
-        "accessToken",
-        loginResult.accessToken
-      );
-
-
-      // ===============================================
-      // 5. AUTH READY
-      // ===============================================
-
-      setIsAuthenticated(true);
-
-      setAuthMessage(
-        "Connected to Pi Network"
-      );
-
-
-      console.log(
-        "[PiAuth] Authentication complete"
-      );
-
-    } catch (err) {
-
-      console.error(
-        "[PiAuth] Authentication failed:",
-        err
-      );
-
-
-      setIsAuthenticated(false);
-
-      setHasError(true);
-
-
-      setAuthMessage(
-        err instanceof Error
-          ? err.message
-          : "Authentication failed. Please try again."
-      );
-
-    } finally {
-
-      setIsInitializing(false);
-
-    }
-
-  };
-
-
-  // ===================================================
-  // START AUTH
-  // ===================================================
-
-  useEffect(() => {
-
-    // -----------------------------------------------
-    // Restore UI state while Pi authentication runs.
-    //
-    // This does NOT mean authenticated.
-    // -----------------------------------------------
-
-    const savedUsername =
-      localStorage.getItem(
-        "pi_username"
-      );
-
-    const savedUid =
-      localStorage.getItem(
-        "uid"
-      );
-
-
-    if (savedUsername) {
-      setUsername(
-        savedUsername
-      );
-    }
-
-    if (savedUid) {
-      setUid(
-        savedUid
-      );
-    }
-    // -----------------------------------------------
-    // Actual authentication
-    // -----------------------------------------------
-
-    initialize();
-
+    setAuthMessage("Connected to Pi Network");
+    localStorage.setItem("pi_username", name);
+    localStorage.setItem("uid", userId);
+    localStorage.setItem("accessToken", token);
   }, []);
 
+  const completeOAuthLogin = useCallback(async (token: string) => {
+    setIsInitializing(true);
+    setHasError(false);
+    setAuthMessage("Verifying Pi account...");
+    try {
+      const result = await piService.verifyWithBackend(token);
+      if (!result.success || !result.user) throw new Error(result.error || "Could not verify Pi account");
+      saveLogin(result.user.username, result.user.uid, token);
+    } finally {
+      setIsInitializing(false);
+    }
+  }, [saveLogin]);
 
-  // ===================================================
-  // CONTEXT VALUE
-  // ===================================================
+  const reinitialize = useCallback(async () => {
+    setIsInitializing(true);
+    setHasError(false);
+    try {
+      if (!isPiBrowser()) {
+        setAuthMessage("Redirecting to Pi Sign-In...");
+        await piService.startPiSignIn();
+        return;
+      }
+      setAuthMessage("Authenticating with Pi Browser...");
+      const login = await piService.login();
+      if (!login.success || !login.accessToken) throw new Error(login.error || "Pi authentication failed");
+      setAuthMessage("Verifying Pi account...");
+      const verified = await piService.verifyWithBackend(login.accessToken);
+      if (!verified.success || !verified.user) throw new Error(verified.error || "Server rejected Pi account");
+      saveLogin(verified.user.username, verified.user.uid, login.accessToken);
+    } catch (error) {
+      console.error("[PiAuth] Authentication failed:", error);
+      setIsAuthenticated(false);
+      setHasError(true);
+      setAuthMessage(error instanceof Error ? error.message : "Authentication failed");
+    } finally {
+      setIsInitializing(false);
+    }
+  }, [saveLogin]);
 
-  const value:
-    PiAuthContextType = {
+  const logout = useCallback(() => {
+    piService.logout();
+    localStorage.removeItem("pi_username");
+    localStorage.removeItem("uid");
+    localStorage.removeItem("accessToken");
+    setIsAuthenticated(false);
+    setUsername(null);
+    setUid(null);
+    setAccessToken(null);
+    setHasError(false);
+    setAuthMessage("Logged out");
+  }, []);
 
-      isAuthenticated,
-
-      isInitializing,
-
-      authMessage,
-
-      hasError,
-
-      username,
-
-      uid,
-
-      accessToken,
-
-      reinitialize:
-        initialize,
-
-    };
-
+  // Restore the existing local session; do not trigger an automatic Pi popup.
+  useEffect(() => {
+    const name = localStorage.getItem("pi_username");
+    const userId = localStorage.getItem("uid");
+    const token = localStorage.getItem("accessToken");
+    if (name && userId && token) {
+      setUsername(name);
+      setUid(userId);
+      setAccessToken(token);
+      setIsAuthenticated(true);
+      setAuthMessage("Connected to Pi Network");
+    } else {
+      setIsAuthenticated(false);
+    }
+    setIsInitializing(false);
+  }, []);
 
   return (
-
-    <PiAuthContext.Provider
-      value={value}
-    >
-
+    <PiAuthContext.Provider value={{
+      isAuthenticated, isInitializing, authMessage, hasError,
+      username, uid, accessToken, reinitialize, completeOAuthLogin, logout,
+    }}>
       {children}
-
     </PiAuthContext.Provider>
-
   );
-
 }
 
-
-// =====================================================
-// HOOK
-// =====================================================
-
 export function usePiAuth() {
-
-  const context =
-    useContext(
-      PiAuthContext
-    );
-
-
-  if (
-    context === undefined
-  ) {
-
-    throw new Error(
-      "usePiAuth must be used within a PiAuthProvider"
-    );
-
-  }
-
-
+  const context = useContext(PiAuthContext);
+  if (context === undefined) throw new Error("usePiAuth must be used within a PiAuthProvider");
   return context;
-
 }
