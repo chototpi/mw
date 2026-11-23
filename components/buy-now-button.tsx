@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button";
 import { PRODUCT_CONFIG } from "@/lib/product-config";
 
 const BUY_API=
-  "https://payofpi.click/payment-backend/api-proxy/buy-product";
+  "https://chototpi.site/register-backend/mw/api/buy-product";
 
 const GET_USER_API=
-  "https://payofpi.click/payment-backend/api-proxy/get-user";
+  "https://chototpi.site/register-backend/mw/api/get-user";
 
 export function BuyNowButton({
   product,

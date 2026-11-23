@@ -11,10 +11,10 @@ import { BottomNavigation } from "@/components/bottom-navigation";
 import { usePiAuth } from "@/contexts/pi-auth-context";
 
 const API_URL=
-  "/payment-backend/api-proxy/update-user";
+  "/register-backend/mw/api/update-user";
 
 const GET_USER_API=
-  "/payment-backend/api-proxy/get-user";
+  "/register-backend/mw/api/get-user";
 
 const COUNTRIES=[
   "Afghanistan","Albania","Algeria","Andorra","Angola","Argentina","Armenia",

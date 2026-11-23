@@ -96,7 +96,7 @@ export default function CheckoutPage(){
 
                   const response=
                     await fetch(
-                      `/payment-backend/api-proxy/product/${item.productId||item.id}`
+                      `/register-backend/mw/api/product/${item.productId||item.id}`
                     );
 
                   const data=
@@ -287,7 +287,7 @@ const handlePiPayment = async () => {
 
               const response =
                 await fetch(
-                  "https://payofpi.click/payment-backend/api-proxy/buy-product",
+                  "https://chototpi.site/register-backend/mw/api/buy-product",
                   {
                     method: "POST",
 
@@ -507,7 +507,7 @@ const handleMuxedPayment = async () => {
 
       const response =
         await fetch(
-          "https://payofpi.click/payment-backend/api-proxy/buy-product",
+          "https://chototpi.site/register-backend/mw/api/buy-product",
           {
             method: "POST",
 

@@ -42,7 +42,7 @@ export async function getProducts(){
 
     const response =
       await fetch(
-        "https://payofpi.click/payment-backend/api-proxy/products",
+        "https://chototpi.site/register-backend/mw/api/products",
         {
           cache:"no-store"
         }
@@ -78,7 +78,7 @@ export async function getProductById(
 
     const response =
       await fetch(
-        `https://payofpi.click/payment-backend/api-proxy/product/${id}`,
+        `https://chototpi.site/register-backend/mw/api/product/${id}`,
         {
           cache:"no-store"
         }

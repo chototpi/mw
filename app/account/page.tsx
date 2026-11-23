@@ -115,7 +115,7 @@ export default function AccountPage(){
 
         const response =
           await fetch(
-            `/payment-backend/api-proxy/get-balance?username=${displayUsername}`
+            `/register-backend/mw/api/get-balance?username=${displayUsername}`
           );
 
         const data =
@@ -146,7 +146,7 @@ export default function AccountPage(){
 
         const response =
           await fetch(
-            `/payment-backend/api-proxy/count-orders?username=${displayUsername}`
+            `/register-backend/mw/api/count-orders?username=${displayUsername}`
           );
 
         const data =

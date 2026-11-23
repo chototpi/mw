@@ -38,7 +38,7 @@ export default function ProductPage(){
 
         const response=
           await fetch(
-            `/payment-backend/api-proxy/product/${id}`
+            `/register-backend/mw/api/product/${id}`
           );
 
         const data=

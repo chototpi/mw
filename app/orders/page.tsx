@@ -13,7 +13,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 const API_URL=
-  "/payment-backend/api-proxy/get-orders";
+  "/register-backend/mw/api/get-orders";
 
 interface Order{
   id:number;

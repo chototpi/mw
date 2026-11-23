@@ -153,7 +153,7 @@ export default function PartnerPage(){
 
         const response =
           await fetch(
-            `/payment-backend/api-proxy/get-partner?username=${encodeURIComponent(username)}`
+            `/register-backend/mw/api/get-partner?username=${encodeURIComponent(username)}`
           );
 
         const data =
@@ -201,7 +201,7 @@ export default function PartnerPage(){
           // load partner products
           const productsResponse =
           await fetch(
-            `/payment-backend/api-proxy/partner-products?username=${encodeURIComponent(username)}`
+            `/register-backend/mw/api/partner-products?username=${encodeURIComponent(username)}`
             );
 
           const productsData =
@@ -272,7 +272,7 @@ export default function PartnerPage(){
 
       const response =
         await fetch(
-          "/payment-backend/api-proxy/save-partner",
+          "/register-backend/mw/api/save-partner",
           {
             method:"POST",
 
@@ -453,7 +453,7 @@ export default function PartnerPage(){
 
       const response =
         await fetch(
-          "/payment-backend/api-proxy/save-product",
+          "/register-backend/mw/api/save-product",
           {
             method:"POST",
 
@@ -641,7 +641,7 @@ export default function PartnerPage(){
 
       const response =
         await fetch(
-          `/payment-backend/api-proxy/delete-product/${productId}`,
+          `/register-backend/mw/api/delete-product/${productId}`,
           {
             method:"DELETE"
           }

@@ -134,7 +134,7 @@ export default function ManagerPage(){
       try{
 
         await fetch(
-          "https://payofpi.click/payment-backend/api-proxy/active-product",
+          "https://payofpi.click/register-backend/mw/api/active-product",
           {
             method:"POST",
 
@@ -164,7 +164,7 @@ export default function ManagerPage(){
       try{
 
         await fetch(
-          `/payment-backend/api-proxy/delete-product/${id}`,
+          `/register-backend/mw/api/delete-product/${id}`,
           {
             method:"DELETE"
           }
@@ -206,7 +206,7 @@ export default function ManagerPage(){
       try{
 
         await fetch(
-          "/payment-backend/api-proxy/edit-product",
+          "/register-backend/mw/api/edit-product",
           {
             method:"POST",
 

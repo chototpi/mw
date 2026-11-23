@@ -100,7 +100,7 @@ export default function ManagerPage(){
 
         const response =
           await fetch(
-            "/payment-backend/api-proxy/products"
+            "/register-backend/mw/api/products"
           );
 
         const data =
@@ -135,7 +135,7 @@ export default function ManagerPage(){
       try{
 
         await fetch(
-          `/payment-backend/api-proxy/delete-product/${id}`,
+          `/register-backend/mw/api/delete-product/${id}`,
           {
             method:"DELETE"
           }
@@ -177,7 +177,7 @@ export default function ManagerPage(){
       try{
 
         await fetch(
-          "/payment-backend/api-proxy/edit-product",
+          "/register-backend/mw/api/edit-product",
           {
             method:"POST",
 
