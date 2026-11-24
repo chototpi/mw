@@ -69,6 +69,8 @@ export default function AccountPage(){
     setOrders] =
     useState(0);
 
+  const MW_API = process.env.NEXT_PUBLIC_MW_API;
+
   // load existing wallet
   useEffect(()=>{
 
@@ -115,7 +117,7 @@ export default function AccountPage(){
 
         const response =
           await fetch(
-            `/register-backend/mw/api/get-balance?username=${displayUsername}`
+            `${MW_API}/get-balance?username=${displayUsername}`
           );
 
         const data =
@@ -146,7 +148,7 @@ export default function AccountPage(){
 
         const response =
           await fetch(
-            `/register-backend/mw/api/count-orders?username=${displayUsername}`
+            `${MW_API}/count-orders?username=${displayUsername}`
           );
 
         const data =

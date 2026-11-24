@@ -36,9 +36,11 @@ export default function ProductPage(){
 
         if(!id) return;
 
+        const MW_API = process.env.NEXT_PUBLIC_MW_API;
+
         const response=
           await fetch(
-            `/register-backend/mw/api/product/${id}`
+            `${MW_API}/product/${id}`
           );
 
         const data=

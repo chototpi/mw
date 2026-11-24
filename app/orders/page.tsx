@@ -12,8 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-const API_URL=
-  "/register-backend/mw/api/get-orders";
+const MW_API = process.env.NEXT_PUBLIC_MW_API;
 
 interface Order{
   id:number;
@@ -54,7 +53,7 @@ export default function OrdersPage(){
 
         const response=
           await fetch(
-            `${API_URL}?username=${username}`
+            `${MW_API}/get-orders?username=${username}`
           );
 
         const data=

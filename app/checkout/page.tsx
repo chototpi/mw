@@ -62,6 +62,8 @@ export default function CheckoutPage(){
     useState<"pi"|"balance">(
       "balance"
     );
+  
+  const MW_API = process.env.NEXT_PUBLIC_MW_API;
 
   // load cart + refresh products from DB
   useEffect(()=>{
@@ -96,7 +98,7 @@ export default function CheckoutPage(){
 
                   const response=
                     await fetch(
-                      `/register-backend/mw/api/product/${item.productId||item.id}`
+                      `${MW_API}/product/${item.productId||item.id}`
                     );
 
                   const data=
@@ -287,7 +289,7 @@ const handlePiPayment = async () => {
 
               const response =
                 await fetch(
-                  "https://chototpi.site/register-backend/mw/api/buy-product",
+                  `${MW_API}/buy-product`,
                   {
                     method: "POST",
 
@@ -507,7 +509,7 @@ const handleMuxedPayment = async () => {
 
       const response =
         await fetch(
-          "https://chototpi.site/register-backend/mw/api/buy-product",
+          `${MW_API}/buy-product`,
           {
             method: "POST",
 

@@ -27,6 +27,8 @@ const ADMIN_USERNAMES = [
   "hanni84dn"
 ];
 
+const MW_API = process.env.NEXT_PUBLIC_MW_API;
+
 interface Product{
   id:string;
   uid:string;
@@ -134,7 +136,7 @@ export default function ManagerPage(){
       try{
 
         await fetch(
-          "https://payofpi.click/register-backend/mw/api/active-product",
+          `${MW_API}/active-product`,
           {
             method:"POST",
 

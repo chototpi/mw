@@ -48,6 +48,8 @@ const CATEGORIES = [
   "Accessories",
 ];
 
+const MW_API = process.env.NEXT_PUBLIC_MW_API;
+
 export default function HomePage(){
 
   const [products,
@@ -98,7 +100,7 @@ useEffect(()=>{
       // fetch latest products
       const response =
         await fetch(
-          "/register-backend/mw/api/products"
+          `${MW_API}/products`
         );
 
       const data =

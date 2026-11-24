@@ -10,11 +10,7 @@ import { Card } from "@/components/ui/card";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { usePiAuth } from "@/contexts/pi-auth-context";
 
-const API_URL=
-  "/register-backend/mw/api/update-user";
-
-const GET_USER_API=
-  "/register-backend/mw/api/get-user";
+const MW_API = process.env.NEXT_PUBLIC_MW_API;
 
 const COUNTRIES=[
   "Afghanistan","Albania","Algeria","Andorra","Angola","Argentina","Armenia",
@@ -91,7 +87,7 @@ export default function SettingsPage(){
 
         const response=
           await fetch(
-            `${GET_USER_API}?username=${username}`
+            `${MW_API}/get-user?username=${username}`
           );
 
         const data=
@@ -205,7 +201,7 @@ export default function SettingsPage(){
 
       const response=
         await fetch(
-          API_URL,
+          `${MW_API}/update-user`,
           {
             method:"POST",
 

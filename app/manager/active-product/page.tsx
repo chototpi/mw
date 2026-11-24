@@ -28,6 +28,8 @@ const ADMIN_USERNAMES = [
   "hanni84dn"
 ];
 
+const MW_API = process.env.NEXT_PUBLIC_MW_API;
+
 interface Product{
   id:string;
   uid:string;
@@ -100,7 +102,7 @@ export default function ManagerPage(){
 
         const response =
           await fetch(
-            "/register-backend/mw/api/products"
+            `${MW_API}/products`
           );
 
         const data =
@@ -135,7 +137,7 @@ export default function ManagerPage(){
       try{
 
         await fetch(
-          `/register-backend/mw/api/delete-product/${id}`,
+          `${MW_API}/delete-product/${id}`,
           {
             method:"DELETE"
           }
@@ -177,7 +179,7 @@ export default function ManagerPage(){
       try{
 
         await fetch(
-          "/register-backend/mw/api/edit-product",
+          `${MW_API}/edit-product`,
           {
             method:"POST",
 

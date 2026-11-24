@@ -45,6 +45,8 @@ const CATEGORIES=[
   "Accessories",
 ];
 
+const MW_API = process.env.NEXT_PUBLIC_MW_API;
+
 export default function PartnerPage(){
 
   const {
@@ -153,7 +155,7 @@ export default function PartnerPage(){
 
         const response =
           await fetch(
-            `/register-backend/mw/api/get-partner?username=${encodeURIComponent(username)}`
+            `${MW_API}/get-partner?username=${encodeURIComponent(username)}`
           );
 
         const data =
@@ -201,7 +203,7 @@ export default function PartnerPage(){
           // load partner products
           const productsResponse =
           await fetch(
-            `/register-backend/mw/api/partner-products?username=${encodeURIComponent(username)}`
+            `${MW_API}/partner-products?username=${encodeURIComponent(username)}`
             );
 
           const productsData =
@@ -272,7 +274,7 @@ export default function PartnerPage(){
 
       const response =
         await fetch(
-          "/register-backend/mw/api/save-partner",
+          `${MW_API}/save-partner`,
           {
             method:"POST",
 
@@ -453,7 +455,7 @@ export default function PartnerPage(){
 
       const response =
         await fetch(
-          "/register-backend/mw/api/save-product",
+          `${MW_API}/save-product`,
           {
             method:"POST",
 
@@ -641,7 +643,7 @@ export default function PartnerPage(){
 
       const response =
         await fetch(
-          `/register-backend/mw/api/delete-product/${productId}`,
+          `${MW_API}/delete-product/${productId}`,
           {
             method:"DELETE"
           }
