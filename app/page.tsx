@@ -98,7 +98,7 @@ useEffect(()=>{
       // fetch latest products
       const response =
         await fetch(
-          "/payment-backend/api-proxy/products"
+          "/register-backend/mw/api/products"
         );
 
       const data =
