@@ -1,101 +1,63 @@
-const API_BASE =
-  "/payment-backend/api-proxy";
 
-// get existing wallet
-export async function getMuxedWallet() {
+const API_BASE = process.env.NEXT_PUBLIC_MW_API;
 
-  const username =
-    localStorage.getItem(
-      "pi_username"
-    );
-
-  if (!username) {
-
-    throw new Error(
-      "Username not found"
-    );
+// Kiểm tra cấu hình API
+function getApiBase() {
+  if (!API_BASE) {
+    throw new Error("Missing NEXT_PUBLIC_MW_API");
   }
 
-  const response =
-    await fetch(
-      `${API_BASE}/get-wallet?username=${username}`
-    );
+  return API_BASE.replace(/\/+$/, "");
+}
 
-  const data =
-    await response.json();
+// Lấy ví hiện tại
+export async function getMuxedWallet() {
+  const username = localStorage.getItem("pi_username");
 
-  if (!data.success) {
+  if (!username) {
+    throw new Error("Username not found");
+  }
 
-    throw new Error(
-      data.error ||
-      "Get wallet failed"
-    );
+  const response = await fetch(
+    `${getApiBase()}/get-wallet?username=${encodeURIComponent(username)}`
+  );
+
+  const data = await response.json();
+
+  if (!response.ok || !data.success) {
+    throw new Error(data.error || "Get wallet failed");
   }
 
   return data.wallet;
 }
 
-// create new wallet
+// Tạo ví mới
 export async function createMuxedAddress() {
+  const uid = localStorage.getItem("uid");
+  const username = localStorage.getItem("pi_username");
 
-  const uid =
-    localStorage.getItem(
-      "uid"
-    );
-
-  const username =
-    localStorage.getItem(
-      "pi_username"
-    );
-
-  if (!uid) {
-
-    throw new Error(
-      "UID not found"
-    );
+  if (!uid || !username) {
+    throw new Error("User information not found");
   }
 
-  if (!username) {
+  const response = await fetch(
+    `${getApiBase()}/create-muxed`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        uid,
+        username
+      })
+    }
+  );
 
-    throw new Error(
-      "Username not found"
-    );
-  }
+  const data = await response.json();
 
-  const response =
-    await fetch(
-      `${API_BASE}/create-muxed`,
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type":
-            "application/json",
-        },
-
-        body: JSON.stringify({
-          uid,
-          username,
-        }),
-      }
-    );
-
-  const data =
-    await response.json();
-
-  if (!data.success) {
-
-    throw new Error(
-      data.error ||
-      "Create wallet failed"
-    );
-  }
-
-  if (!data.muxed) {
-
-    throw new Error(
-      "No wallet returned"
-    );
+  if (!response.ok || !data.success || !data.muxed) {
+    throw new Error(data.error || "Create wallet failed");
   }
 
   return data.muxed;
