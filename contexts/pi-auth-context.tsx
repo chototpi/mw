@@ -65,10 +65,10 @@ export function PiAuthProvider({ children }: { children: ReactNode }) {
         await piService.startPiSignIn();
         return;
       }
-      setAuthMessage("Authenticating with Pi Browser...");
+      setAuthMessage("Authenticating...");
       const login = await piService.login();
-      if (!login.success || !login.accessToken) throw new Error(login.error || "Pi authentication failed");
-      setAuthMessage("Verifying Pi account...");
+      if (!login.success || !login.accessToken) throw new Error(login.error || "Failed");
+      setAuthMessage("Verifying...");
       const verified = await piService.verifyWithBackend(login.accessToken);
       if (!verified.success || !verified.user) throw new Error(verified.error || "Server rejected Pi account");
       saveLogin(verified.user.username, verified.user.uid, login.accessToken);
